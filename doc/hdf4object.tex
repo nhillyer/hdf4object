@@ -1,0 +1,80 @@
+\documentclass{report}
+\usepackage[letterpaper]{geometry}
+\begin{document}
+
+\title{HDF4Object Guide}
+\author{\textsc{T. Nelson Hillyer}\\
+	DEVELOP,\\
+	National Aeronautics and Space Administration}
+\date{\today}
+\maketitle
+
+\section*{Introduction}
+The C/C++ interface provided by the NCSA to manipulate HDF files require too much overhead programming code that manipulates the HDF files.  The HDF4Object class was written to compensate for this idiosyncrasy. HDF4Object provides an easy to use object oriented front end for the HDF4 interface, allowing for cleaner code through the elimination of low level HDF code along side the programmer's source.  This is a guide for proper usage of this object and its native functions.
+
+\section*{Prerequisites}
+Currently\footnote{as of release 0.2} this library requires the end-user install the HDF4 libraries provided by the NCSA for use in back-end operations and compilation of the HDF4Object.  Make sure you have this installed prior to using HDF4Object.
+
+\section*{Limitations}
+There are several limitations with this interface.  First and foremost is the two-dimension barrier, where sets that have three or more dimensions will not work properly.  Second since these data sets can become vast in size, you can run out of memory when dealing with very large data sets.
+
+\section*{Initialization of HDF4Object}
+Initialization of the HDF4Object is far easier in comparison to old-fashioned methods.  Below is how declaring and initializing the HDF4Object is done.
+\begin{verbatim}
+hdf4object* example = new HDF4Object("FILE_NAME");  //DONE!
+\end{verbatim}
+\section*{HDF4Object Functions}
+\subsection*{\texttt{getNumberOfSets}}
+This function returns the number sets are contained in the data set.\\
+\begin{verbatim}
+hdf4object* example = new hdf4object("hdf_file.hdf");   //initialize object
+cout << example->getDataSets() << endl;
+\end{verbatim}
+
+\subsection*{\texttt{getDataSets}}
+This function returns a string array containing the data sets in the working HDF file.\\
+\begin{verbatim}
+hdf4object* example = new hdf4object("hdf_file.hdf");   //initialize object
+string* sets = example->getDataSets();   //assign to sets the data sets
+
+//iterate through the sets normally
+for (int i = 0; i < example->getNumberOfSets(); i++)
+     cout << sets[i] << endl;
+\end{verbatim}
+
+\subsection*{\texttt{getSetRank}}
+Returns the rank (i.e. number of dimensions) of the specified data set.  For example, a three dimensional data set would return 3 to the caller.\\
+\begin{verbatim}
+hdf4object* example = new hdf4object("hdf_file.hdf");   //initialize object
+int rank = example->getSetRank("DATA_SET_NAME");  //assign the set's rank to integer set
+\end{verbatim}
+
+\subsection*{\texttt{getSetDimensions}}
+Returns an array of size determined by the set's rank (\emph{see getSetRank}).  Each array index contains the magnitude of that dimension.  For example, an array of 17985 $\times$ 583 would have its dimensions returned from \emph{getSetDimensions} as an array of length two containing
+\begin{tabular}{|c | c|}
+\hline
+17985 & 583\\
+\hline
+\end{tabular}.
+\begin{verbatim}
+hdf4object* example = new hdf4object("hdf_file.hdf");   //initialize object
+
+//assign the dimension to the array dimensions
+int* dimensions = example->getSetDimensions("DATA_SET_NAME");   
+
+//iterate through the dimensions
+for (int i = 0; i < example->getSetRank("DATA_SET_NAME"); i++)
+{
+     cout << dimensions[i] << endl;
+}
+\end{verbatim}
+
+\subsection*{\texttt{setToArray}}
+This function returns an array representation of the specified data set.  It is returned as a multidimensional array pointer, so therefore dynamic memory management is required to prevent memory leaks (\emph{see freeArray}).
+\begin{verbatim}
+hdf4object* example = new hdf4object("hdf_file.hdf"); // declaring and initializing the object
+float32** array = example->setToArray("DATA_SET_NAME"); // assigning the array
+cout << array[0][0] << endl;  // standard array access
+example->freeArray(array);   // freeing the memory allocated by the array
+\end{verbatim}
+\end{document}
