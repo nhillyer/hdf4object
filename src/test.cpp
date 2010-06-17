@@ -10,21 +10,17 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	hdf4object* test = new hdf4object(new string(*argv));
-	cerr << "FILE CREATED" << endl;
-	cerr << sizeof(float ) << endl;
-	float* array = (float*) test->setToArray(new string("Total_Attenuated_Backscatter_532"), sizeof(float));
-	cerr << "ARRAY CREATED" << endl;
-
-	int* dims = test->getSetDimensions(new string("Total_Attenuated_Backscatter_532"));
-	cerr << "DIMS CREATED" << endl;
-	cerr << array << endl;	
-	for (int i = 0; i < dims[0]; i++) {
-		for (int j = 0; j < dims[1]; j++) {
-			cout << array[i * dims[1] + j] << '\t';
-		}
-		cout << endl;
+	//float* array = (float*) test->setToArray1d(new string("Latitude"), sizeof(float));
+	//int* dims = test->getSetDimensions(new string("Latitude"));
+		
+	float* array = (float*) test->setToArray2d(new string("Integrated_Attenuated_Backscatter_532"), sizeof(float));
+	int* dims = test->getSetDimensions(new string("Integrated_Attenuated_Backscatter_532"));
+/*	for (int i = 0; i < dims[0]; ++i)
+	{
+		cout << array[i] << endl;
 	}
-	//test->freeArray(array, sizeof(float));	
+*/
+	
 	delete test;
 
 	return 0;

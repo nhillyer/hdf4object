@@ -23,7 +23,9 @@ class hdf4object
 		int getNumberOfSets();
 		int getSetRank(std::string* setName);
 		int* getSetDimensions(std::string* setName);
-		void* setToArray(std::string* setName, int n_bytes);
+		void* setToArray1d(std::string* setName, int n_bytes);
+		void* setToArray2d(std::string* setName, int n_bytes);
+		void* setToArray3d(std::string* setName, int n_bytes);
 		void freeArray(void* array, int n_bytes);
 	
 	private:
@@ -40,3 +42,4 @@ class hdf4object
 };
 
 #endif
+

@@ -95,10 +95,7 @@ int* hdf4object::getSetDimensions(std::string* setName)
 	return NULL;
 }
 
-/*
- * Converts the specified set into an array of equivalent dimensions.
- */
-void* hdf4object::setToArray(std::string* setName, int n_bytes)
+void* hdf4object::setToArray1d(std::string* setName, int n_bytes)
 {
 	for (int i = 0; i < n_datasets; ++i)
 	{
@@ -106,25 +103,35 @@ void* hdf4object::setToArray(std::string* setName, int n_bytes)
 		{
 			sds_id = SDselect(sd_id, i);
 			int32 start[setRank[i]], edges[setRank[i]];
-			std::cerr << "BEFORE INIT MALLOC" << std::endl;
-
-			/*int **array = (int **)malloc(setDimensions[i][0] * sizeof(int *));
-			array[0] = (int *)malloc(setDimensions[i][0] * setDimensions[i][1] * n_bytes);
-			for (int j = 1; j < setDimensions[i][0]; ++j)
-			{
-				array[j] = array[0] + j * setDimensions[i][1];
-			}
-			std::cerr << sizeof(**array) << std::endl;
-			*/
+			std::cerr << setDimensions[i][0] << " x " << setDimensions[i][1] << std::endl;
 			void *array = (void *)malloc(setDimensions[i][0] * setDimensions[i][1] * n_bytes);
-			std::cerr << "BEFORE DATA PULL" << std::endl;
 			start[0] = 0; start[1] = 0;
 			edges[0] = setDimensions[i][0]; edges[1] = setDimensions[i][1];
-			std::cerr << array << std::endl;
-			status = SDreaddata(sds_id, start, NULL, edges, (void *) array);
-			std::cerr << "AFTER DATA PULL" << std::endl;
-			std::getchar();
-			return (void**)array;
+			SDreaddata(sds_id, start, NULL, edges, array);
+
+			return array;
+		}
+	}
+
+	return NULL;
+}
+
+/*
+ * Converts the specified set into a 2D array of equivalent dimensions.
+ */
+void* hdf4object::setToArray2d(std::string* setName, int n_bytes)
+{
+	for (int i = 0; i < n_datasets; ++i)
+	{
+		if (setNames[i] == *setName)
+		{
+			sds_id = SDselect(sd_id, i);
+			int32 start[setRank[i]], edges[setRank[i]];
+			std::cerr << *setName << "\t" << setDimensions[i][0] << "\t" << setDimensions[i][1] << std::endl;
+			void *array = (void *)malloc(setDimensions[i][0] * sizeof(double *));
+			std::cerr << "sizeof(array) = " << (double )array[0] << std::endl;
+
+			return NULL;
 		}
 	}
 	return NULL;
