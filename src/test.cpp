@@ -13,13 +13,19 @@ int main(int argc, char** argv)
 	//float* array = (float*) test->setToArray1d(new string("Latitude"), sizeof(float));
 	//int* dims = test->getSetDimensions(new string("Latitude"));
 		
-	float* array = (float*) test->setToArray2d(new string("Integrated_Attenuated_Backscatter_532"), sizeof(float));
+	float** array = (float**) test->setToArray2d(new string("Integrated_Attenuated_Backscatter_532"), sizeof(float));
 	int* dims = test->getSetDimensions(new string("Integrated_Attenuated_Backscatter_532"));
-/*	for (int i = 0; i < dims[0]; ++i)
+
+	cout << "printing...." << endl;
+
+	for (int i = 0; i < dims[0]; ++i)
 	{
-		cout << array[i] << endl;
+		for (int j = 0; j < dims[1]; ++j)
+		{
+			cout << array[i][j] << "\t";
+		}
+		cout << endl;
 	}
-*/
 	
 	delete test;
 
