@@ -128,27 +128,19 @@ void* hdf4object::setToArray2d(std::string* setName, int n_bytes)
 		{
 			sds_id = SDselect(sd_id, i);
 			int32 start[setRank[i]], edges[setRank[i]];
-			std::cerr << *setName << "\t" << setDimensions[i][0] << "\t" << setDimensions[i][1] << std::endl;
-			float **array = (float **)malloc(setDimensions[i][0] * sizeof(float *));
+			int** array = (int **)malloc(setDimensions[i][0] * sizeof(int *));
+			array[0] = (int *)malloc(setDimensions[i][0] * setDimensions[i][1] * n_bytes);
 			
-			for (int j = 0; j < setDimensions[i][0]; ++j)
+			for (int j = 1; j < setDimensions[i][0]; ++j)
 			{
-				array[j] = (float *)malloc(setDimensions[i][1] * n_bytes);
-				memset(array[j], 0, n_bytes);
-				start[0] = j; start[1] = 0;
-				edges[0] = start[0] + 1; edges[1] = setDimensions[i][1];
-				//std::cerr << "start: " << start[0] << "\t" << start[1] << std::endl;
-				//std::cerr << "end:   " << edges[0] << "\t" << edges[1] << std::endl;
-				
-				SDreaddata(sds_id, start, NULL, edges, (void *)array[j]);
-				std::cerr << j << std::endl;
-				/*
-				array[0] = (int *)malloc(setDimensions[i][1] * n_bytes);
-				start[0] = 0; start[1] = 0;
-				edges[0] = 1; edges[1] = setDimensions[i][1];
-				SDreaddata(sds_id, start, NULL, edges, (void *)array[0]);
-				*/
+				array[j] = array[0] + j * setDimensions[i][1];
 			}
+
+			start[0] = 0; start[1] = 0;
+			edges[0] = setDimensions[i][0]; edges[1] = setDimensions[i][1];
+
+			SDreaddata(sds_id, start, NULL, edges, (void *)* array);
+
 			return array;
 		}
 	}
